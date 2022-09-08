@@ -1,8 +1,10 @@
 #![feature(min_specialization)]
+#![no_std]
 
-use std::borrow::Cow;
+pub(crate) extern crate alloc;
+use alloc::{borrow::Cow, string::{String, ToString}};
 
-/// A similar trait to [`ToString`], but avoiding extra allocations when applied to a [`String`]
+/// A similar trait to [`ToString`], but avoiding an extra allocation when applied to a [`String`]
 pub trait IntoString {
     fn into_string (self) -> String;    
 }
@@ -21,8 +23,7 @@ impl IntoString for String {
     }
 }
 
-/// Helper trait to turn [`ToString`]-able values into strings, avoiding an allocation if the type is already a [`String`],
-/// and avoiding a new allocation if it's a [`&str`](str)
+/// Helper trait to turn [`ToString`]-able values into strings, avoiding an allocation for [`String`]s and [`&str`](str)
 pub trait IntoCowStr<'a> {
     fn into_cow_str (self) -> Cow<'a, str>;
 }
