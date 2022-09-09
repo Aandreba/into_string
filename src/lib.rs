@@ -1,4 +1,4 @@
-#![cfg_attr(not(feature = "std"), no_std)]
+#![cfg_attr(not(feature = "std"), no_std, feature(core_c_str, alloc_c_string))]
 #![cfg_attr(docsrs, feature(doc_cfg))]
 #![cfg_attr(feature = "max", feature(specialization), allow(incomplete_features))]
 #![cfg_attr(not(feature = "max"), feature(min_specialization))]
@@ -6,8 +6,17 @@
 #![doc = include_str!("../README.md")]
 
 pub(crate) extern crate alloc;
-use core::{ffi::CStr};
-use alloc::{boxed::Box, borrow::Cow, string::{String, ToString}, ffi::CString};
+
+cfg_if::cfg_if! {
+    if #[cfg(feature = "std")] {
+        use std::ffi::{CStr, CString};
+    } else {
+        use core::{ffi::CStr};
+        use alloc::ffi::CString;
+    }
+}
+
+use alloc::{boxed::Box, borrow::Cow, string::{String, ToString}};
 
 /// A similar trait to [`ToString`], but avoiding an extra allocation when applied to a [`String`]
 pub trait IntoString {
