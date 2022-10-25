@@ -226,3 +226,22 @@ impl<'a> IntoCowStr<'a> for &'a str {
         Cow::Borrowed(self)
     }
 }
+
+/// Helper trait to turn [`ToString`]-able values into strings, avoiding an allocation for [`&str`](str)
+pub trait AsCowStr<'a> {
+    fn as_cow_str(&'a self) -> Cow<'a, str>;
+}
+
+impl<T: ToString> AsCowStr<'_> for T {
+    #[inline]
+    default fn as_cow_str(&self) -> Cow<'_, str> {
+        Cow::Owned(self.to_string())
+    }
+}
+
+impl<'a> AsCowStr<'a> for str {
+    #[inline]
+    fn as_cow_str(&'a self) -> Cow<'a, str> {
+        Cow::Borrowed(self)
+    }
+}
