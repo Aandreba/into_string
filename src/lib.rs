@@ -16,7 +16,9 @@ cfg_if::cfg_if! {
     }
 }
 
-use alloc::{boxed::Box, borrow::Cow, string::{String, ToString}};
+use core::ops::Deref;
+
+use alloc::{boxed::Box, borrow::Cow, string::{String, ToString}, sync::Arc, rc::Rc};
 
 /// A similar trait to [`ToString`], but avoiding an extra allocation when applied to a [`String`]
 pub trait IntoString {
@@ -242,6 +244,34 @@ impl<T: ToString> AsCowStr<'_> for T {
 impl<'a> AsCowStr<'a> for str {
     #[inline]
     fn as_cow_str(&'a self) -> Cow<'a, str> {
+        Cow::Borrowed(self)
+    }
+}
+
+impl AsCowStr<'_> for String {
+    #[inline]
+    fn as_cow_str(&self) -> Cow<'_, str> {
+        Cow::Borrowed(self)
+    }
+}
+
+impl AsCowStr<'_> for Box<str> {
+    #[inline]
+    fn as_cow_str(&self) -> Cow<'_, str> {
+        Cow::Borrowed(self)
+    }
+}
+
+impl AsCowStr<'_> for Rc<str> {
+    #[inline]
+    fn as_cow_str(&self) -> Cow<'_, str> {
+        Cow::Borrowed(self)
+    }
+}
+
+impl AsCowStr<'_> for Arc<str> {
+    #[inline]
+    fn as_cow_str(&self) -> Cow<'_, str> {
         Cow::Borrowed(self)
     }
 }
