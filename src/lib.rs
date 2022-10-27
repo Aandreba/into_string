@@ -6,6 +6,8 @@
 #![doc = include_str!("../README.md")]
 
 pub(crate) extern crate alloc;
+mod from;
+pub use from::*;
 
 cfg_if::cfg_if! {
     if #[cfg(feature = "std")] {
