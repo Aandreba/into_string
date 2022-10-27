@@ -1,4 +1,5 @@
 use core::str::FromStr;
+use alloc::string::String;
 
 pub trait FromString: Sized {
     type Err;

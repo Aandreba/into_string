@@ -1,4 +1,4 @@
-#![cfg_attr(not(feature = "std"), no_std, feature(core_c_str, alloc_c_string))]
+#![cfg_attr(not(feature = "std"), no_std)]
 #![cfg_attr(docsrs, feature(doc_cfg))]
 #![cfg_attr(feature = "max", feature(specialization), allow(incomplete_features))]
 #![cfg_attr(not(feature = "max"), feature(min_specialization))]
@@ -17,8 +17,6 @@ cfg_if::cfg_if! {
         use alloc::ffi::CString;
     }
 }
-
-use core::ops::Deref;
 
 use alloc::{boxed::Box, borrow::Cow, string::{String, ToString}, sync::Arc, rc::Rc};
 
