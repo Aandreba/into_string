@@ -26,7 +26,7 @@ pub trait IntoString {
     fn into_string (self) -> String;    
 }
 
-impl<T: ToString> IntoString for &T {
+impl<T: ?Sized + ToString> IntoString for &T {
     #[inline(always)]
     default fn into_string (self) -> String {
         T::to_string(self)
@@ -202,10 +202,13 @@ impl IntoPathBuf for Box<std::path::Path> {
 }
 
 /// Helper trait to turn [`ToString`]-able values into strings, avoiding an allocation for [`String`]s and [`&str`](str)
+#[cfg_attr(docsrs, doc(cfg(feature = "max")))]
+#[cfg(feature = "max")]
 pub trait IntoCowStr<'a> {
     fn into_cow_str (self) -> Cow<'a, str>;
 }
 
+#[cfg(feature = "max")]
 impl<'a, T: IntoString> IntoCowStr<'a> for T {
     #[inline(always)]
     default fn into_cow_str (self) -> Cow<'a, str> {
@@ -213,7 +216,6 @@ impl<'a, T: IntoString> IntoCowStr<'a> for T {
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "max")))]
 #[cfg(feature = "max")]
 impl<'a> IntoCowStr<'a> for Cow<'a, str> {
     #[inline(always)]
@@ -222,6 +224,7 @@ impl<'a> IntoCowStr<'a> for Cow<'a, str> {
     }
 }
 
+#[cfg(feature = "max")]
 impl<'a> IntoCowStr<'a> for &'a str {
     #[inline(always)]
     fn into_cow_str (self) -> Cow<'a, str> {
